@@ -1,0 +1,17 @@
+# .NET build folders
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Database (SQLite)
+*.db
+
+# Environment files
+appsettings.Development.json
