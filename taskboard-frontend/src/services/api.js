@@ -1,5 +1,5 @@
 
-const BASE_URL = "http://localhost:5290/api";
+const BASE_URL = "https://taskboard-app-9ulk.onrender.com/api";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
