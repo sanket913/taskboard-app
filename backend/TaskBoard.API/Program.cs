@@ -7,9 +7,9 @@ using TaskBoard.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ SQLite Database
+// SQLite Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source= ./taskboard.db"));
+    options.UseSqlite("Data Source=taskboard.db"));
 
 // Controllers
 builder.Services.AddControllers();
@@ -18,19 +18,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ✅ CORS (important for Vercel frontend)
+//CORS (Allow Vercel + Local)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
+            policy.WithOrigins(
+                "http://localhost:3000",
+                "https://taskboard-app-mu.vercel.app"
+            )
+            .AllowAnyMethod()
+            .AllowAnyHeader();
         });
 });
 
-// ✅ JWT Authentication
+// JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
@@ -54,19 +57,20 @@ builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
-// ✅ VERY IMPORTANT FOR RENDER (AUTO DB CREATE)
+// AUTO CREATE DB (Render fix)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
+
+//PORT for Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
 app.Urls.Add($"http://0.0.0.0:{port}");
 
-app.Run();
+//MIDDLEWARE ORDER (VERY IMPORTANT)
 
-// Middleware
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -76,4 +80,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// ONLY ONE RUN
 app.Run();
