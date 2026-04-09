@@ -3,7 +3,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 COPY . .
-RUN dotnet publish -c Release -o out
+
+# 🔥 FIX: specify project path
+RUN dotnet publish TaskBoard.API/TaskBoard.API.csproj -c Release -o out
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
@@ -13,4 +15,4 @@ COPY --from=build /app/out .
 
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "TaskBoard.API.dll"]
+CMD ["dotnet", "TaskBoard.API.dll"]
