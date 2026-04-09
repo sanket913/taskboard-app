@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // ✅ SQLite Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=taskboard.db"));
+    options.UseSqlite("Data Source= ./taskboard.db"));
 
 // Controllers
 builder.Services.AddControllers();
@@ -60,6 +60,10 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
+var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+app.Urls.Add($"http://0.0.0.0:{port}");
+
+app.Run();
 
 // Middleware
 app.UseCors("AllowAll");
